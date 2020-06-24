@@ -144,6 +144,7 @@ func (s *S) TestWaitInvisible() {
 	s.True(h4.Visible())
 
 	h4t := h4.Timeout(timeout)
+	defer h4t.CancelTimeout()
 	h4t.WaitVisible()
 	h4t.CancelTimeout()
 
@@ -155,7 +156,9 @@ func (s *S) TestWaitInvisible() {
 	}()
 
 	h4.Timeout(timeout).WaitInvisible()
+	defer h4.CancelTimeout()
 	btn.Timeout(timeout).WaitInvisible()
+	defer btn.CancelTimeout()
 
 	s.False(p.Has("h4"))
 }

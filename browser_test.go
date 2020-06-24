@@ -45,6 +45,7 @@ func (s *S) TestBrowserWaitEvent() {
 
 func (s *S) TestBrowserCrash() {
 	browser := rod.New().Timeout(1 * time.Minute).Connect()
+	defer browser.CancelTimeout()
 	page := browser.Page("")
 
 	wait := browser.WaitEvent(&proto.PageFrameNavigated{})
@@ -69,6 +70,7 @@ func (s *S) TestBrowserCall() {
 
 func (s *S) TestMonitor() {
 	b := rod.New().Timeout(1 * time.Minute).Connect()
+	defer b.CancelTimeout()
 	defer b.Close()
 	p := b.Page(srcFile("fixtures/click.html")).WaitLoad()
 	host := b.ServeMonitor("127.0.0.1:0").Listener.Addr().String()
@@ -87,6 +89,7 @@ func (s *S) TestRemoteLaunch() {
 
 	l := launcher.NewRemote("ws://" + srv.Listener.Addr().String())
 	b := rod.New().Timeout(1 * time.Minute).Client(l.Client()).Connect()
+	defer b.CancelTimeout()
 
 	p := b.Page(srcFile("fixtures/click.html"))
 	p.Element("button").Click()
@@ -206,6 +209,7 @@ func (s *S) TestResolveBlocking() {
 // For BenchmarkCache and BenchmarkNoCache, the difference is nearly 12% which is too much to ignore.
 func BenchmarkCacheOff(b *testing.B) {
 	p := rod.New().Timeout(1 * time.Minute).Connect().Page(srcFile("fixtures/click.html"))
+	defer p.CancelTimeout()
 
 	b.ResetTimer()
 
@@ -244,6 +248,7 @@ func BenchmarkCacheOff(b *testing.B) {
 
 func BenchmarkCache(b *testing.B) {
 	p := rod.New().Timeout(1 * time.Minute).Connect().Page(srcFile("fixtures/click.html"))
+	defer p.CancelTimeout()
 
 	b.ResetTimer()
 

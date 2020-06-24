@@ -193,6 +193,7 @@ func (s *S) TestUntilPage() {
 
 func (s *S) TestPageWait() {
 	page := s.page.Timeout(3 * time.Second).Navigate(srcFile("fixtures/click.html"))
+	page.CancelTimeout()
 	page.Wait(`() => document.querySelector('button') !== null`)
 }
 
